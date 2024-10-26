@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction</title>
+    <link rel="stylesheet" type="text/css" href="style2.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Irish+Grover&display=swap" rel="stylesheet">
+    <link rel="icon" href="favicon.png" type="image/png">
+</head>
+<body>
+    <div id="imagebg"></div>
+    <div id="overlay"></div>
+    <h1 class="predtitle">My Oh My, <br>Your Stars make beautiful sign,explains the beauty you bestow on universe....... </h1>
+    <div id="cards">
+        <div class="card">
+            <h1>Health</h1>
+            <img src="cards.jpeg" alt="placeholder">
+        </div>
+        <div class="card">
+            <h1>Career</h1>
+            <img src="cards.jpeg" alt="placeholder">
+        </div>
+        <div class="card">
+            <h1>Love</h1>
+            <img src="cards.jpeg" alt="placeholder">
+        </div>
+        <div class="card">
+            <h1>Relations</h1>
+            <img src="cards.jpeg" alt="placeholder">
+        </div>
+        <div class="card">
+            <h1>Money</h1>
+            <img src="cards.jpeg" alt="placeholder">
+        </div>
+    </div>
+    <div id="imgdiv">
+        <img id="moonimg" src="moons.png" alt="moons">
+        <div id="pdiv">
+            <p>
+                Born on <span id="dob"></span> and Sign: <span id="sign"></span>, you say.
+            </p>
+            <p>
+                What would you like to know?
+            </p>
+        </div>
+    </div>
+    <div id="cardModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h1 id="modalTitle"></h1>
+            <div id="modalData">
+                <div id="rating-ring"></div>
+                <p id="insight1"></p>
+                <p id="insight2"></p>
+                <p id="insight3"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            var modal = document.getElementById("cardModal");
+            var modalTitle = document.getElementById("modalTitle");
+            var modalImage = document.getElementById("modalImage");
+            var span = document.getElementsByClassName("close")[0];
+            const response = localStorage.getItem('apiResponse');
+            const date = localStorage.getItem('date');
+            const dob = localStorage.getItem('dob').split('-').reverse().join('-');
+            const sign = localStorage.getItem('sign');
+            
+            if (dob && sign) {
+                document.getElementById('dob').textContent = dob;
+                document.getElementById('sign').textContent = sign;
+            }
+            if (response) {
+                const currdate = new Date();
+                const day = currdate.getDate();
+                const month = currdate.getMonth() + 1;
+                const year = currdate.getFullYear();
+                const today = `${year}-${month}-${day}`;
+                if (today !== date) {
+                    window.location.href = 'index.html';
+                }
+            }
+            const data = JSON.parse(response);
+        
+            document.querySelectorAll('.card img').forEach(function(img) {
+                img.addEventListener('click', function() {
+                    var cardTitle = this.previousElementSibling.textContent;
+                    modalTitle.textContent = cardTitle;
+                    cardTitle = cardTitle.toLowerCase();
+                    const rating = data[cardTitle].rating;
+                    const insight1 = data[cardTitle].insight1;
+                    const insight2 = data[cardTitle].insight2;
+                    const insight3 = data[cardTitle].insight3;
+                    const ratingRing = document.getElementById('rating-ring');
+                    ratingRing.style.setProperty('--rating', (rating / 10) * 100);
+                    ratingRing.textContent = rating;
+                    document.getElementById('insight1').textContent = insight1;
+                    document.getElementById('insight2').textContent = insight2;
+                    document.getElementById('insight3').textContent = insight3;
+                    modal.style.display = "flex";
+                });
+            });
+        
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+        
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        });
+    </script>
+</body>
+</html>

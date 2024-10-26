@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="icon" href="favicon.png" type="image/png">
+</head>
+<body>
+    <div id="main">
+        <div id="overlay"></div>
+        <div id="form">
+            <form>
+                <label for="dob">On What Date did you fall from heaven?</label>
+                <input type="date" id="dob" name="dob" required>
+                <label for="date">What's your sign?</label>
+                <select id="sign" name="sign" required>
+                    <option value="mesh">Mesh</option>
+                    <option value="karka">Karka</option>
+                    <option value="vrish">Vrish</option>
+                    <option value="mithun">Mithun</option>
+                    <option value="simha">Simha</option>
+                    <option value="kanya">Kanya</option>
+                    <option value="vrishchik">Vrishchik</option>
+                    <option value="tula">Tula</option>
+                    <option value="dhanu">Dhanu</option>
+                    <option value="makara">Makara</option>
+                    <option value="kumbh">Kumbh</option>
+                    <option value="meena">Meena</option>
+                </select>
+                <h5 id="first">Aquarius, Leo, Cancer, Virgo<h5/>
+                <h5 id="second">What are you babe?</h5>
+                <h5 id="third">Let's count your lucky stars...</h5>
+                <button type="button" id="submit" onclick="submitForm()">Submit</button>
+            </form>
+        </div>
+    </div>
+    <div id="loading" style="display: none;">
+        <div id="loadingdiv">
+            <div class="spinner"></div>
+            <p>Cooking</p>
+        </div>
+    </div>
+    <script>
+        async function submitForm() {
+            const dob = document.getElementById('dob').value;
+            if (!dob) {
+                alert('Please enter DOB');
+                return;
+            }
+            document.getElementById('loading').style.display = 'flex';
+            const sign = document.getElementById('sign').value;
+            try {
+                const currdate = new Date();
+                const day = currdate.getDate();
+                const month = currdate.getMonth() + 1;
+                const year = currdate.getFullYear();
+                const today = `${year}-${month}-${day}`;
+                const response = await fetch(`http://127.0.0.1:8000/get_data/${sign}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                localStorage.setItem('apiResponse', JSON.stringify(data));
+                localStorage.setItem('date', today);
+                localStorage.setItem('dob', dob);
+                localStorage.setItem('sign', sign);
+                window.location.href = 'pred.html';
+            } catch (error) {
+                console.error('Fetch error:', error);
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
